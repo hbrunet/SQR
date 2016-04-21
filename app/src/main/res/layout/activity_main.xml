@@ -15,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="150px"
         android:layout_gravity="center_horizontal"
-        android:text="Cliente"
+        android:text="Escanea el código"
         android:textSize="18sp" />
 
     <SurfaceView

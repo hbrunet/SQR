@@ -8,6 +8,7 @@ import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -28,20 +29,25 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setTitle("Escanea el código");
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        cameraView = (SurfaceView)findViewById(R.id.camera_view);
-        barcodeInfo = (TextView)findViewById(R.id.code_info);
+        cameraView = (SurfaceView) findViewById(R.id.camera_view);
+        barcodeInfo = (TextView) findViewById(R.id.code_info);
 
         barcodeDetector =
                 new BarcodeDetector.Builder(this)
                         .setBarcodeFormats(Barcode.QR_CODE)
                         .build();
 
+        if (!barcodeDetector.isOperational()) {
+            Toast.makeText(getApplicationContext(), "No se pudo configurar el detector!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         cameraSource = new CameraSource
                 .Builder(this, barcodeDetector)
-                .setRequestedPreviewSize(640, 480)
+                .setFacing(CameraSource.CAMERA_FACING_BACK)
+                //.setRequestedPreviewSize(1600, 1024)
                 .build();
 
         cameraView.getHolder().addCallback(new SurfaceHolder.Callback() {
