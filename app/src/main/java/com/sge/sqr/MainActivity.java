@@ -1,5 +1,6 @@
 package com.sge.sqr;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -124,11 +125,11 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.settings:
-                int i = 0;
-                return true;
-            default:
-                return false;
+                Intent i = new Intent(this, SettingsActivity.class);
+                this.startActivity(i);
+                break;
         }
+        return true;
     }
 
     @Override
