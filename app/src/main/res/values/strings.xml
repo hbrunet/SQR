@@ -3,4 +3,5 @@
     <string name="escanea_el_codigo">Escanea el código</string>
     <string name="cannot_access_web_service">"No se puede acceder al servicio web: "</string>
     <string name="cannot_config_detector">No se pudo configurar el detector!</string>
+    <string name="settings">Configuración</string>
 </resources>
