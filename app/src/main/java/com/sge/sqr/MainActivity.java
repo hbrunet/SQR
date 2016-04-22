@@ -1,6 +1,7 @@
 package com.sge.sqr;
 
 import android.content.pm.ActivityInfo;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,9 +16,20 @@ import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapPrimitive;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
+
 import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String SOAP_ACTION = "http://www.w3schools.com/xml/CelsiusToFahrenheit";
+    private static final String METHOD_NAME = "CelsiusToFahrenheit";
+    private static final String NAMESPACE = "http://www.w3schools.com/xml/";
+    private static final String URL = "http://www.w3schools.com/xml/tempconvert.asmx?op=CelsiusToFahrenheit";
 
     private SurfaceView cameraView;
     private TextView barcodeInfo;
@@ -82,15 +94,56 @@ public class MainActivity extends AppCompatActivity {
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
 
                 if (barcodes.size() != 0) {
-                    barcodeInfo.post(new Runnable() {    // Use the post method of the TextView
+                    AsyncCallWS task = new AsyncCallWS();
+                    //task.execute(barcodes.valueAt(0).displayValue);
+                    task.execute("30");
+
+                    /*barcodeInfo.post(new Runnable() {    // Use the post method of the TextView
                         public void run() {
                             barcodeInfo.setText(    // Update the TextView
                                     barcodes.valueAt(0).displayValue
                             );
                         }
-                    });
+                    });*/
                 }
             }
         });
     }
+
+    private class AsyncCallWS extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+            String webResponse = "";
+
+            if (params.length == 0)
+                return null;
+
+            try {
+                SoapObject Request = new SoapObject(NAMESPACE, METHOD_NAME);
+                Request.addProperty("Celsius", params[0]);
+
+                SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+                soapEnvelope.dotNet = true;
+                soapEnvelope.setOutputSoapObject(Request);
+
+                HttpTransportSE transport = new HttpTransportSE(URL);
+
+                transport.call(SOAP_ACTION, soapEnvelope);
+                SoapPrimitive response = (SoapPrimitive) soapEnvelope.getResponse();
+                webResponse = response.toString();
+
+            } catch (Exception ex) {
+                Toast.makeText(getApplicationContext(), "No se puede acceder al servicio web: " + ex.toString(), Toast.LENGTH_LONG).show();
+            }
+
+            return webResponse;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            barcodeInfo.setText(s);
+        }
+    }
+
 }
