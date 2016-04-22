@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                         .build();
 
         if (!barcodeDetector.isOperational()) {
-            Toast.makeText(getApplicationContext(), "No se pudo configurar el detector!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.cannot_config_detector, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -110,6 +110,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        barcodeInfo.setText(R.string.escanea_el_codigo);
+    }
+
     private class AsyncCallWS extends AsyncTask<String, Void, String> {
 
         @Override
@@ -134,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                 webResponse = response.toString();
 
             } catch (Exception ex) {
-                Toast.makeText(getApplicationContext(), "No se puede acceder al servicio web: " + ex.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.cannot_access_web_service) + ex.toString(), Toast.LENGTH_LONG).show();
             }
 
             return webResponse;
