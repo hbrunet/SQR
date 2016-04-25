@@ -3,5 +3,6 @@
     <EditTextPreference
         android:key="webservice_preference"
         android:title="URL Servicio Web"
-        android:summary="Ingrese las url del Servicio web." />
+        android:summary="Ingrese las url del Servicio web."
+        android:defaultValue="http://www.w3schools.com/xml/tempconvert.asmx?op=CelsiusToFahrenheit"/>
 </PreferenceScreen>

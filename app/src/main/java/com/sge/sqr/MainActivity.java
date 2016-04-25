@@ -1,8 +1,10 @@
 package com.sge.sqr;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,12 +35,13 @@ public class MainActivity extends AppCompatActivity {
     private static final String SOAP_ACTION = "http://www.w3schools.com/xml/CelsiusToFahrenheit";
     private static final String METHOD_NAME = "CelsiusToFahrenheit";
     private static final String NAMESPACE = "http://www.w3schools.com/xml/";
-    private static final String URL = "http://www.w3schools.com/xml/tempconvert.asmx?op=CelsiusToFahrenheit";
+    private static String URL = "http://www.w3schools.com/xml/tempconvert.asmx?op=CelsiusToFahrenheit";
 
     private SurfaceView cameraView;
     private TextView barcodeInfo;
     private CameraSource cameraSource;
     private BarcodeDetector barcodeDetector;
+    private SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        URL = sharedPref.getString("webservice_preference", URL);
 
         cameraView = (SurfaceView) findViewById(R.id.camera_view);
         barcodeInfo = (TextView) findViewById(R.id.code_info);
@@ -136,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         barcodeInfo.setText(R.string.escanea_el_codigo);
+        URL = sharedPref.getString("webservice_preference", "");
     }
 
     private class AsyncCallWS extends AsyncTask<String, Void, String> {
