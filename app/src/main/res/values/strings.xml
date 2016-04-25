@@ -4,4 +4,5 @@
     <string name="cannot_access_web_service">"No se puede acceder al servicio web: "</string>
     <string name="cannot_config_detector">No se pudo configurar el detector!</string>
     <string name="settings">Ajustes</string>
+    <string name="default_webservice">http://www.w3schools.com/xml/tempconvert.asmx?op=CelsiusToFahrenheit</string>
 </resources>
