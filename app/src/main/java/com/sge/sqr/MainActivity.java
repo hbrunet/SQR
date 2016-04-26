@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     private SurfaceView cameraView;
     private TextView barcodeInfo;
+    private TextView resultWS;
     private CameraSource cameraSource;
     private BarcodeDetector barcodeDetector;
     private SharedPreferences sharedPref;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         cameraView = (SurfaceView) findViewById(R.id.camera_view);
         barcodeInfo = (TextView) findViewById(R.id.code_info);
+        resultWS = (TextView) findViewById(R.id.result_ws);
 
         barcodeDetector =
                 new BarcodeDetector.Builder(this)
@@ -106,13 +108,13 @@ public class MainActivity extends AppCompatActivity {
                     //task.execute(barcodes.valueAt(0).displayValue);
                     task.execute("30");
 
-                    /*barcodeInfo.post(new Runnable() {    // Use the post method of the TextView
+                    barcodeInfo.post(new Runnable() {    // Use the post method of the TextView
                         public void run() {
                             barcodeInfo.setText(    // Update the TextView
                                     barcodes.valueAt(0).displayValue
                             );
                         }
-                    });*/
+                    });
                 }
             }
         });
@@ -175,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String s) {
-            barcodeInfo.setText(s);
+            resultWS.setText(s);
         }
     }
 
