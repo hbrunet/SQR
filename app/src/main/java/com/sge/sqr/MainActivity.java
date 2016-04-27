@@ -7,7 +7,6 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String SOAP_ACTION = "http://www.w3schools.com/xml/CelsiusToFahrenheit";
     private static final String METHOD_NAME = "CelsiusToFahrenheit";
     private static final String NAMESPACE = "http://www.w3schools.com/xml/";
+    private static String URL = "";
 
     private SurfaceView cameraView;
     private TextView barcodeInfo;
@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        URL = sharedPref.getString("webservice_preference", getString(R.string.default_webservice));
 
         cameraView = (SurfaceView) findViewById(R.id.camera_view);
         barcodeInfo = (TextView) findViewById(R.id.code_info);
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
                         .build();
 
         if (!barcodeDetector.isOperational()) {
-            Toast.makeText(getApplicationContext(), R.string.cannot_config_detector, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), R.string.cannot_config_detector, Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -78,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     cameraSource.start(cameraView.getHolder());
                 } catch (IOException ie) {
-                    Log.e("CAMERA SOURCE", ie.getMessage());
+                    Toast.makeText(getApplicationContext(), ie.getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -142,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         barcodeInfo.setText(R.string.escanea_el_codigo);
+        URL = sharedPref.getString("webservice_preference", getString(R.string.default_webservice));
     }
 
     private class AsyncCallWS extends AsyncTask<String, Void, String> {
@@ -161,8 +163,7 @@ public class MainActivity extends AppCompatActivity {
                 soapEnvelope.dotNet = true;
                 soapEnvelope.setOutputSoapObject(Request);
 
-                String url = sharedPref.getString("webservice_preference", getString(R.string.default_webservice));
-                HttpTransportSE transport = new HttpTransportSE(url);
+                HttpTransportSE transport = new HttpTransportSE(URL);
 
                 transport.call(SOAP_ACTION, soapEnvelope);
                 SoapPrimitive response = (SoapPrimitive) soapEnvelope.getResponse();
