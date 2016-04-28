@@ -4,15 +4,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,6 +58,16 @@ public class MainActivity extends AppCompatActivity {
         cameraView = (SurfaceView) findViewById(R.id.camera_view);
         barcodeInfo = (TextView) findViewById(R.id.code_info);
         resultWS = (TextView) findViewById(R.id.result_ws);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resultWS.setText("");
+                barcodeInfo.setText(R.string.escanea_el_codigo);
+            }
+        });
 
         barcodeDetector =
                 new BarcodeDetector.Builder(this)
@@ -142,7 +154,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        barcodeInfo.setText(R.string.escanea_el_codigo);
         URL = sharedPref.getString("webservice_preference", getString(R.string.default_webservice));
     }
 
