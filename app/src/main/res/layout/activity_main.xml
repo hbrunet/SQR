@@ -17,13 +17,6 @@
         tools:context="com.sge.sqr.MainActivity">
 
         <TextView
-            android:id="@+id/result_ws"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:textSize="18sp" />
-
-        <TextView
             android:id="@+id/code_info"
             android:layout_width="wrap_content"
             android:layout_height="150px"
@@ -45,6 +38,6 @@
         android:layout_margin="16dp"
         android:clickable="true"
         android:src="@drawable/ic_restore_page_white_24dp"
-        app:layout_anchorGravity="bottom|end"
-        app:layout_anchor="@id/camera_view" />
+        app:layout_anchor="@id/camera_view"
+        app:layout_anchorGravity="bottom|end" />
 </android.support.design.widget.CoordinatorLayout>

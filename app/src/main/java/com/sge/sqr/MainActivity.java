@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
 
     private SurfaceView cameraView;
     private TextView barcodeInfo;
-    private TextView resultWS;
     private CameraSource cameraSource;
     private BarcodeDetector barcodeDetector;
     private SharedPreferences sharedPref;
@@ -58,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
 
         cameraView = (SurfaceView) findViewById(R.id.camera_view);
         barcodeInfo = (TextView) findViewById(R.id.code_info);
-        resultWS = (TextView) findViewById(R.id.result_ws);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
@@ -66,8 +64,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 try {
-                    resultWS.setText("");
-                    barcodeInfo.setText(R.string.escanea_el_codigo);
+                    barcodeInfo.post(new Runnable() {
+                        public void run() {
+                            barcodeInfo.setText(R.string.escanea_el_codigo);
+                        }
+                    });
                 } catch (Exception ex) {
                     Snackbar.make(v, ex.getMessage(), Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
@@ -125,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
                 if (barcodes.size() != 0) {
                     AsyncCallWS task = new AsyncCallWS();
                     //task.execute(barcodes.valueAt(0).displayValue);
-                    task.execute("30");
 
                     barcodeInfo.post(new Runnable() {    // Use the post method of the TextView
                         public void run() {
@@ -194,8 +194,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            resultWS.setText(s);
+        protected void onPostExecute(final String s) {
+            barcodeInfo.post(new Runnable() {
+                public void run() {
+                    barcodeInfo.setText(s);
+                }
+            });
         }
     }
 
