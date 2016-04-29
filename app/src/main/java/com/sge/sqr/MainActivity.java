@@ -34,9 +34,9 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String SOAP_ACTION = "http://www.w3schools.com/xml/CelsiusToFahrenheit";
-    private static final String METHOD_NAME = "CelsiusToFahrenheit";
-    private static final String NAMESPACE = "http://www.w3schools.com/xml/";
+    private static final String SOAP_ACTION = "http://SQR.IT.Contracts.Service/IIdentifyCards/ReadCard";
+    private static final String METHOD_NAME = "ReadCard";
+    private static final String NAMESPACE = "http://SQR.IT.Contracts.Service";
     private static String URL = "";
 
     private SurfaceView cameraView;
@@ -125,15 +125,15 @@ public class MainActivity extends AppCompatActivity {
 
                 if (barcodes.size() != 0) {
                     AsyncCallWS task = new AsyncCallWS();
-                    //task.execute(barcodes.valueAt(0).displayValue);
+                    task.execute(barcodes.valueAt(0).displayValue);
 
-                    barcodeInfo.post(new Runnable() {    // Use the post method of the TextView
+                    /*barcodeInfo.post(new Runnable() {    // Use the post method of the TextView
                         public void run() {
                             barcodeInfo.setText(    // Update the TextView
                                     barcodes.valueAt(0).displayValue
                             );
                         }
-                    });
+                    });*/
                 }
             }
         });
@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 SoapObject Request = new SoapObject(NAMESPACE, METHOD_NAME);
-                Request.addProperty("Celsius", params[0]);
+                Request.addProperty("code", params[0]);
 
                 SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
                 soapEnvelope.dotNet = true;
