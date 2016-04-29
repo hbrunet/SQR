@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -38,7 +39,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String METHOD_NAME = "ReadCard";
     private static final String NAMESPACE = "http://SQR.IT.Contracts.Service";
     private static String URL = "";
+    private static boolean CAN_READ = true;
 
+    private CoordinatorLayout layout;
     private SurfaceView cameraView;
     private TextView barcodeInfo;
     private CameraSource cameraSource;
@@ -51,10 +54,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
+        CAN_READ = true;
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         URL = sharedPref.getString("webservice_preference", getString(R.string.default_webservice));
-
+        layout = (CoordinatorLayout) findViewById(R.id.layout);
         cameraView = (SurfaceView) findViewById(R.id.camera_view);
         barcodeInfo = (TextView) findViewById(R.id.code_info);
 
@@ -69,9 +72,9 @@ public class MainActivity extends AppCompatActivity {
                             barcodeInfo.setText(R.string.escanea_el_codigo);
                         }
                     });
+                    CAN_READ = true;
                 } catch (Exception ex) {
-                    Snackbar.make(v, ex.getMessage(), Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+                    Snackbar.make(layout, ex.getMessage(), Snackbar.LENGTH_LONG).show();
                 }
             }
         });
@@ -82,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                         .build();
 
         if (!barcodeDetector.isOperational()) {
-            Toast.makeText(getApplicationContext(), R.string.cannot_config_detector, Toast.LENGTH_LONG).show();
+            Snackbar.make(layout, R.string.cannot_config_detector, Snackbar.LENGTH_LONG).show();
             return;
         }
 
@@ -98,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     cameraSource.start(cameraView.getHolder());
                 } catch (IOException ie) {
-                    Toast.makeText(getApplicationContext(), ie.getMessage(), Toast.LENGTH_LONG).show();
+                    Snackbar.make(layout, ie.getMessage(), Snackbar.LENGTH_LONG).show();
                 }
             }
 
@@ -123,17 +126,11 @@ public class MainActivity extends AppCompatActivity {
             public void receiveDetections(Detector.Detections<Barcode> detections) {
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
 
-                if (barcodes.size() != 0) {
+                if (CAN_READ && barcodes.size() != 0) {
                     AsyncCallWS task = new AsyncCallWS();
                     task.execute(barcodes.valueAt(0).displayValue);
-
-                    /*barcodeInfo.post(new Runnable() {    // Use the post method of the TextView
-                        public void run() {
-                            barcodeInfo.setText(    // Update the TextView
-                                    barcodes.valueAt(0).displayValue
-                            );
-                        }
-                    });*/
+                    CAN_READ = false;
+                    Snackbar.make(layout, R.string.card_was_read, Snackbar.LENGTH_LONG).show();
                 }
             }
         });
@@ -202,5 +199,4 @@ public class MainActivity extends AppCompatActivity {
             });
         }
     }
-
 }

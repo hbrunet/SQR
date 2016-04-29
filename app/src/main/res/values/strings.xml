@@ -5,4 +5,5 @@
     <string name="cannot_config_detector">No se pudo configurar el detector!</string>
     <string name="settings">Ajustes</string>
     <string name="default_webservice">http://sqr.homeip.net:8733/SQRService</string>
+    <string name="card_was_read">La tarjeta fue leida.</string>
 </resources>
