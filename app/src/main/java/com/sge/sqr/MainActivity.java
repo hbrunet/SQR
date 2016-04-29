@@ -18,7 +18,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -184,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                 webResponse = response.toString();
 
             } catch (Exception ex) {
-                Toast.makeText(getApplicationContext(), getString(R.string.cannot_access_web_service) + ex.toString(), Toast.LENGTH_LONG).show();
+                Snackbar.make(layout, getString(R.string.cannot_access_web_service) + ex.toString(), Snackbar.LENGTH_LONG).show();
             }
 
             return webResponse;
