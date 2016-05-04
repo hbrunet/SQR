@@ -6,4 +6,5 @@
     <string name="settings">Ajustes</string>
     <string name="default_webservice">http://sqr.homeip.net:8733/SQRService</string>
     <string name="card_was_read">La tarjeta fue leida.</string>
+    <string name="brillo">Brillo</string>
 </resources>

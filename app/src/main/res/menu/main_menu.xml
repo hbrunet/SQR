@@ -4,4 +4,7 @@
         android:id="@+id/settings"
         android:icon="@drawable/ic_settings_black_24dp"
         android:title="@string/settings" />
+    <item
+        android:id="@+id/denied_access"
+        android:title="@string/brillo" />
 </menu>

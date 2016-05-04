@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String NAMESPACE = "http://SQR.IT.Contracts.Service";
     private static String URL = "";
     private static boolean CAN_READ = true;
+    private static boolean DENIED_ACCESS = false;
+    private static final String DENIED_CODE = "00000000-0000-0000-0000-000000000000";
 
     private CoordinatorLayout layout;
     private SurfaceView cameraView;
@@ -72,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                     CAN_READ = true;
+                    DENIED_ACCESS = false;
                 } catch (Exception ex) {
                     Snackbar.make(layout, ex.getMessage(), Snackbar.LENGTH_LONG).show();
                 }
@@ -127,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (CAN_READ && barcodes.size() != 0) {
                     AsyncCallWS task = new AsyncCallWS();
-                    task.execute(barcodes.valueAt(0).displayValue);
+                    task.execute(!DENIED_ACCESS ? barcodes.valueAt(0).displayValue : DENIED_CODE);
                     CAN_READ = false;
                     Snackbar.make(layout, R.string.card_was_read, Snackbar.LENGTH_LONG).show();
                 }
@@ -148,6 +151,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.settings:
                 Intent i = new Intent(this, SettingsActivity.class);
                 this.startActivity(i);
+                break;
+            case R.id.denied_access:
+                DENIED_ACCESS = true;
                 break;
         }
         return true;
