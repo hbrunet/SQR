@@ -68,13 +68,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 try {
-                    barcodeInfo.post(new Runnable() {
-                        public void run() {
-                            barcodeInfo.setText(R.string.escanea_el_codigo);
-                        }
-                    });
-                    CAN_READ = true;
-                    DENIED_ACCESS = false;
+                    refresh(false);
                 } catch (Exception ex) {
                     Snackbar.make(layout, ex.getMessage(), Snackbar.LENGTH_LONG).show();
                 }
@@ -138,6 +132,16 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void refresh(boolean deniedAccess) {
+        barcodeInfo.post(new Runnable() {
+            public void run() {
+                barcodeInfo.setText(R.string.escanea_el_codigo);
+            }
+        });
+        CAN_READ = true;
+        DENIED_ACCESS = deniedAccess;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -153,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
                 this.startActivity(i);
                 break;
             case R.id.denied_access:
-                DENIED_ACCESS = true;
+                refresh(true);
                 break;
         }
         return true;
