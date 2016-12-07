@@ -9,5 +9,6 @@
         android:key="id_preference"
         android:title="Id App"
         android:summary="Ingrese la identificación de la aplicación."
-        android:defaultValue=""/>
+        android:defaultValue=""
+        android:password="true"/>
 </PreferenceScreen>
