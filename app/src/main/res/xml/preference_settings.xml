@@ -5,4 +5,9 @@
         android:title="URL Servicio Web"
         android:summary="Ingrese las url del Servicio web."
         android:defaultValue="@string/default_webservice"/>
+    <EditTextPreference
+        android:key="id_preference"
+        android:title="Id App"
+        android:summary="Ingrese la identificación de la aplicación."
+        android:defaultValue=""/>
 </PreferenceScreen>

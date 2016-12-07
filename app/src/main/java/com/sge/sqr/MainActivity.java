@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.vision.CameraSource;
@@ -26,7 +27,6 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
-import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private static String URL = "";
     private static boolean CAN_READ = true;
     private static boolean DENIED_ACCESS = false;
-    private static final String DENIED_CODE = "00000000-0000-0000-0000-000000000000";
+    private static String ID = "";
 
     private CoordinatorLayout layout;
     private SurfaceView cameraView;
@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private CameraSource cameraSource;
     private BarcodeDetector barcodeDetector;
     private SharedPreferences sharedPref;
+    private ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +59,11 @@ public class MainActivity extends AppCompatActivity {
         CAN_READ = true;
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         URL = sharedPref.getString("webservice_preference", getString(R.string.default_webservice));
+        ID = sharedPref.getString("id_preference", "");
         layout = (CoordinatorLayout) findViewById(R.id.layout);
         cameraView = (SurfaceView) findViewById(R.id.camera_view);
         barcodeInfo = (TextView) findViewById(R.id.code_info);
+        imageView = (ImageView) findViewById(R.id.imageView);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
@@ -124,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (CAN_READ && barcodes.size() != 0) {
                     AsyncCallWS task = new AsyncCallWS();
-                    task.execute(!DENIED_ACCESS ? barcodes.valueAt(0).displayValue : DENIED_CODE);
+                    task.execute(barcodes.valueAt(0).displayValue, (!DENIED_ACCESS ? "true" : "false"), ID);
                     CAN_READ = false;
                     Snackbar.make(layout, R.string.card_was_read, Snackbar.LENGTH_LONG).show();
                 }
@@ -140,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
         });
         CAN_READ = true;
         DENIED_ACCESS = deniedAccess;
+        imageView.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -167,13 +171,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         URL = sharedPref.getString("webservice_preference", getString(R.string.default_webservice));
+        ID = sharedPref.getString("id_preference", "");
     }
 
-    private class AsyncCallWS extends AsyncTask<String, Void, String> {
+    private class AsyncCallWS extends AsyncTask<String, Void, Result> {
 
         @Override
-        protected String doInBackground(String... params) {
-            String webResponse = "";
+        protected Result doInBackground(String... params) {
+            Result result = null;
 
             if (params.length == 0)
                 return null;
@@ -181,6 +186,8 @@ public class MainActivity extends AppCompatActivity {
             try {
                 SoapObject Request = new SoapObject(NAMESPACE, METHOD_NAME);
                 Request.addProperty("code", params[0]);
+                Request.addProperty("allow", Boolean.parseBoolean(params[1]));
+                Request.addProperty("id", params[2]);
 
                 SoapSerializationEnvelope soapEnvelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
                 soapEnvelope.dotNet = true;
@@ -189,21 +196,27 @@ public class MainActivity extends AppCompatActivity {
                 HttpTransportSE transport = new HttpTransportSE(URL);
 
                 transport.call(SOAP_ACTION, soapEnvelope);
-                SoapPrimitive response = (SoapPrimitive) soapEnvelope.getResponse();
-                webResponse = response.toString();
+                SoapObject response = (SoapObject) soapEnvelope.getResponse();
+                result = new Result(response.getProperty("Text").toString(), Boolean.parseBoolean(response.getProperty("Valid").toString()));
 
             } catch (Exception ex) {
                 Snackbar.make(layout, getString(R.string.cannot_access_web_service) + ex.toString(), Snackbar.LENGTH_LONG).show();
             }
 
-            return webResponse;
+            return result;
         }
 
         @Override
-        protected void onPostExecute(final String s) {
+        protected void onPostExecute(final Result result) {
             barcodeInfo.post(new Runnable() {
                 public void run() {
-                    barcodeInfo.setText(s);
+                    barcodeInfo.setText(result.getText());
+                    if (result.isValid()) {
+                        imageView.setImageResource(R.drawable.ic_up);
+                    } else {
+                        imageView.setImageResource(R.drawable.ic_down);
+                    }
+                    imageView.setVisibility(View.VISIBLE);
                 }
             });
         }

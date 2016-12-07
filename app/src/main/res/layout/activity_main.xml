@@ -25,6 +25,13 @@
             android:text="@string/escanea_el_codigo"
             android:textSize="18sp" />
 
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_up"
+            android:id="@+id/imageView"
+            android:visibility="invisible"/>
+
         <SurfaceView
             android:id="@+id/camera_view"
             android:layout_width="match_parent"
