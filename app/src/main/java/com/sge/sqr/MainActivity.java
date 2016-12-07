@@ -210,13 +210,15 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(final Result result) {
             barcodeInfo.post(new Runnable() {
                 public void run() {
-                    barcodeInfo.setText(result.getText());
-                    if (result.isValid()) {
-                        imageView.setImageResource(R.drawable.ic_up);
-                    } else {
-                        imageView.setImageResource(R.drawable.ic_down);
+                    if (result != null) {
+                        barcodeInfo.setText(result.getText());
+                        if (result.isValid()) {
+                            imageView.setImageResource(R.drawable.ic_up);
+                        } else {
+                            imageView.setImageResource(R.drawable.ic_down);
+                        }
+                        imageView.setVisibility(View.VISIBLE);
                     }
-                    imageView.setVisibility(View.VISIBLE);
                 }
             });
         }
